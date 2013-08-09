@@ -1,0 +1,20 @@
+﻿
+<div id="buttonContainer">
+    <button id="singleShipButton">GET A SHIP</button>
+</div>
+<div id="results">
+    
+</div>
+
+<script id="shipTemplate" type="text/html">
+    <div id="ship">
+        <label>{{Type}}: </label><div>{{Name}}</div>
+    </div>
+</script>
+
+    <script type="text/javascript">
+        $('#buttonContainer').ready(function() {
+            window.App.init();
+        });
+    </script>
+

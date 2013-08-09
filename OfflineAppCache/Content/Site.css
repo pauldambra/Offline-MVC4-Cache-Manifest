@@ -1,0 +1,26 @@
+﻿body {
+    font-size: .85em;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+    color: #232323;
+    background-color: #008000;
+    width: 80%;
+    margin: 5em auto;
+}
+
+h1 {
+    background-color: blanchedalmond;
+}
+
+p {
+    background-color: tomato;
+}
+
+label {
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+#ship div {
+    display: inline-block;
+}
+
