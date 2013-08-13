@@ -18,12 +18,16 @@ namespace OfflineAppCache.Controllers
             return View();
         }
 
+        public ActionResult ThatOther()
+        {
+            return View();
+        }
+
         public JsonResult RandomShip()
         {
             var index = Rnd.Next(_db.Ships.Count());
             var ship = _db.Ships.ElementAt(index);
             return Json(ship, JsonRequestBehavior.AllowGet);
-
         }
     }
 }
