@@ -27,6 +27,6 @@ becomes
 
 To-do
 ----
-* Alter the Cache Manifest file only when the cached files change  - in the current setup it is time-stamped and so all assets are downloaded once a minute
+* Alter the Cache Manifest file only when the cached files change  - in the current setup it is time-stamped and so only "changes" once a minute
 * Add notification of status on client and prompt user to reload when new assets are available
 
