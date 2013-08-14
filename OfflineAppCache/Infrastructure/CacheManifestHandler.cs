@@ -2,22 +2,30 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Optimization;
 
 namespace OfflineAppCache.Infrastructure
 {
-    public class CacheManifestHandler : IHttpHandler
+    public class CacheManifestHandler : IHttpHandler, IAssetListener
     {
         private UrlHelper _urlHelper;
+        private static long _lastChangeTimeStamp;
+
+        private static readonly List<string> VirtualFolderPaths = new List<string>
+            {
+                "~/Content",
+                "~/Scripts"
+            };
+
+        private static AssetMonitor _assetMonitor;
+        private static readonly List<string> PhysicalServerPaths = new List<string>();
 
         public void ProcessRequest(HttpContext context)
         {
             _urlHelper = new UrlHelper(context.Request.RequestContext);
+
+            InitialiseAssetMonitor(context);
 
             //don't let the browser/proxies cache the manifest using traditional caching methods.
             SetCacheability(context);
@@ -31,6 +39,21 @@ namespace OfflineAppCache.Infrastructure
             AddCacheSection(context);
             
             AddNetworkSection(context);
+        }
+
+        private void InitialiseAssetMonitor(HttpContext context)
+        {
+            if (_assetMonitor != null)
+            {
+                return;
+            }
+            foreach (var physicalPath in VirtualFolderPaths
+                .Select(virtualPath => context.Server.MapPath(virtualPath)))
+            {
+                PhysicalServerPaths.Add(physicalPath);
+            }
+            _assetMonitor = new AssetMonitor(PhysicalServerPaths, this);
+            _lastChangeTimeStamp = DateTime.Now.Ticks;
         }
 
         private static void AddNetworkSection(HttpContext context)
@@ -61,7 +84,7 @@ namespace OfflineAppCache.Infrastructure
         private static void AddManifestHeaderText(HttpContext context)
         {
             context.Response.Write("CACHE MANIFEST" + Environment.NewLine);
-            context.Response.Write("#Version: " + DateTime.Now.ToString("dd/MM/yyyy hh:mm") + Environment.NewLine);
+            context.Response.Write("#Version: " + _lastChangeTimeStamp + Environment.NewLine);
         }
 
         private static void SetCacheability(HttpContext context)
@@ -73,16 +96,9 @@ namespace OfflineAppCache.Infrastructure
 
         private void AddFolderContents(HttpContext context)
         {
-            var virtualFolderPaths = new List<string>
-                {
-                    "~/Content",
-                    "~/Scripts"
-                };
-            foreach (var url in virtualFolderPaths
+            foreach (var url in VirtualFolderPaths
                 .SelectMany(path => GetRelativePathsToRoot(context, path)))
-            {
                 context.Response.Write(url + Environment.NewLine);
-            }
         }
 
         private IEnumerable<string> GetRelativePathsToRoot(HttpContext context, string virtualPath)
@@ -99,5 +115,10 @@ namespace OfflineAppCache.Infrastructure
         }
 
         public bool IsReusable { get { return false; } }
+        
+        public void OnDirectoryChange()
+        {
+            _lastChangeTimeStamp = DateTime.Now.Ticks;
+        }
     }
 }

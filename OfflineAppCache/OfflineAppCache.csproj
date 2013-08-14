@@ -131,6 +131,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\AssetMonitor.cs" />
     <Compile Include="Infrastructure\CacheManifestHandler.cs" />
     <Compile Include="Models\Ships.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
