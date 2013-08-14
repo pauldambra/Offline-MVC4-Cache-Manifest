@@ -8,6 +8,8 @@ And based on the pointers in the links contained in that research I came up with
 
 An MVC4 site which builds a cache.manifest file containing all the files in the Content and Scripts folder (because they're where static files tend to go in MVC projects)
 
+The application uses [the FileSystemWatcher class](http://msdn.microsoft.com/en-us/library/system.io.filesystemwatcher.aspx) to change the Cache.Manifest only when a monitored asset folder changes.
+
 Feedback more than welcome!
 
 Gotchas
@@ -27,6 +29,5 @@ becomes
 
 To-do
 ----
-* Alter the Cache Manifest file only when the cached files change  - in the current setup it is time-stamped and so only "changes" once a minute
 * Add notification of status on client and prompt user to reload when new assets are available
 
