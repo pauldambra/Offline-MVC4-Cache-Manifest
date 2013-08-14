@@ -19,7 +19,6 @@ namespace OfflineAppCache.Infrastructure
             };
 
         private static AssetMonitor _assetMonitor;
-        private static readonly List<string> PhysicalServerPaths = new List<string>();
 
         public void ProcessRequest(HttpContext context)
         {
@@ -47,12 +46,10 @@ namespace OfflineAppCache.Infrastructure
             {
                 return;
             }
-            foreach (var physicalPath in VirtualFolderPaths
-                .Select(virtualPath => context.Server.MapPath(virtualPath)))
-            {
-                PhysicalServerPaths.Add(physicalPath);
-            }
-            _assetMonitor = new AssetMonitor(PhysicalServerPaths, this);
+            var physicalServerPaths = new List<string>();
+            physicalServerPaths.AddRange(VirtualFolderPaths
+                .Select(virtualPath => context.Server.MapPath(virtualPath)));
+            _assetMonitor = new AssetMonitor(physicalServerPaths, this);
             _lastChangeTimeStamp = DateTime.Now.Ticks;
         }
 
